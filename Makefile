@@ -45,7 +45,7 @@ mock: ### Запустить mockgen
 
 .PHONY: check-coverage
 check-coverage: 
-	go test ./... -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
+	go test ./internal/... -coverprofile=./cover_unit.out -covermode=atomic -coverpkg=./...
 	go-test-coverage --config=./.testcoverage.yml
 
 bin-deps:

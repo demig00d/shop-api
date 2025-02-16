@@ -2,6 +2,9 @@ package config
 
 import (
 	"errors"
+	"fmt"
+	"log"
+	"os"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )
@@ -56,5 +59,20 @@ func LoadConfig() (Config, error) {
 		return *cfg, errors.Join(errEnv, errFile)
 	}
 
+	return *cfg, nil
+}
+
+// LoadConfigFrom загружает конфигурацию из указанного файла .env.
+func LoadConfigFrom(envFile string) (Config, error) {
+	cfg := &Config{}
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(dir)
+	err = cleanenv.ReadConfig(envFile, cfg)
+	if err != nil {
+		return *cfg, fmt.Errorf("ошибка чтения конфигурации из файла: %w", err)
+	}
 	return *cfg, nil
 }

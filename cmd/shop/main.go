@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"os"
 
@@ -32,7 +31,7 @@ func main() {
 	log.Info("Конфигурация загружена", "config", cfg)
 
 	// init storage
-	database, err := connectDB(cfg.Database, log)
+	database, err := db.ConnectDB(cfg.Database)
 	if err != nil {
 		log.Error("Ошибка подключения к базе данных", "error", err)
 		os.Exit(1)
@@ -57,25 +56,4 @@ func main() {
 	if err != nil {
 		log.Error("Ошибка закрытия соединения с базой данных", "error", err)
 	}
-}
-
-func connectDB(dbCfg config.DatabaseConfig, log *logger.Logger) (*sql.DB, error) {
-	// Строка подключения к базе данных PostgreSQL
-	connStr := fmt.Sprintf(
-		"port=%s user=%s password=%s dbname=%s host=%s sslmode=disable",
-		dbCfg.Port, dbCfg.User, dbCfg.Password, dbCfg.Name, dbCfg.Host,
-	)
-
-	database, err := sql.Open("postgres", connStr)
-	if err != nil {
-		return nil, fmt.Errorf("ошибка подключения к базе данных: %w", err)
-	}
-
-	// Проверка соединения с базой данных
-	err = database.Ping()
-	if err != nil {
-		return nil, fmt.Errorf("ошибка проверки соединения с базой данных: %w", err)
-	}
-	log.Info("Успешное подключение к базе данных")
-	return database, nil
 }
