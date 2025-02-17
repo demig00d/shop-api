@@ -14,6 +14,8 @@ CREATE TABLE inventory (
     UNIQUE (user_id, item_type)
 );
 
+CREATE INDEX idx_inventory_user_id ON inventory (user_id);
+
 CREATE TABLE coin_transactions (
     id SERIAL PRIMARY KEY,
     sender_user_id INTEGER NOT NULL,
@@ -23,6 +25,12 @@ CREATE TABLE coin_transactions (
     FOREIGN KEY (sender_user_id) REFERENCES users(id),
     FOREIGN KEY (receiver_user_id) REFERENCES users(id)
 );
+
+CREATE INDEX idx_coin_transactions_sender_user_id ON coin_transactions (sender_user_id);
+CREATE INDEX idx_coin_transactions_receiver_user_id ON coin_transactions (receiver_user_id);
+
+CREATE INDEX idx_coin_transactions_transaction_date ON coin_transactions (transaction_date DESC);
+
 
 CREATE TABLE items (
     id SERIAL PRIMARY KEY,
