@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"log/slog"
 	"net/http"
 	"time"
@@ -12,7 +11,6 @@ import (
 
 // NewServer создает и настраивает новый HTTP сервер.
 func NewServer(
-	port string,
 	userUseCase uc.UserUseCaseInterface,
 	sendCoinUseCase uc.SendCoinUseCaseInterface,
 	buyItemUseCase uc.BuyItemUseCaseInterface,
@@ -29,13 +27,11 @@ func NewServer(
 	mux.Handle("/docs/", http.StripPrefix("/docs/", swaggerHandler))
 	mux.Handle("/schema.json", swaggerHandler)
 
-	serverAddress := fmt.Sprintf(":%s", port)
-
-	addr := fmt.Sprintf("http://localhost:%s", port)
-	slog.Info("Сервер запущен", slog.String("address", addr))
-	slog.Info("Swagger UI доступен", slog.String("address", fmt.Sprintf("http://localhost:%s/docs/", port)))
+	serverAddress := "http://localhost:8080"
+	slog.Info("Сервер запущен", slog.String("address", serverAddress))
+	slog.Info("Swagger UI доступен", slog.String("address", "http://localhost:8080/docs/"))
 	server := &http.Server{
-		Addr:         serverAddress,
+		Addr:         ":8080",
 		Handler:      mux,
 		ReadTimeout:  15 * time.Second,
 		WriteTimeout: 15 * time.Second,

@@ -45,7 +45,7 @@ func main() {
 	sendCoinUseCase := uc.NewSendCoinUseCase(userDB, transactionDB, log)
 	buyItemUseCase := uc.NewBuyItemUseCase(userDB, itemDB, transactionDB, log)
 
-	srv := http.NewServer(cfg.Server.Port, userInfoUseCase, sendCoinUseCase, buyItemUseCase, log)
+	srv := http.NewServer(userInfoUseCase, sendCoinUseCase, buyItemUseCase, log)
 	log.Info("Сервер запущен", "address", srv.Addr)
 	if err := srv.ListenAndServe(); err != nil {
 		log.Error("Ошибка сервера", "error", err)

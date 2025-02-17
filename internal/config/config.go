@@ -12,20 +12,14 @@ import (
 type (
 	// Config содержит конфигурацию приложения.
 	Config struct {
-		Server   ServerConfig
 		Database DatabaseConfig
 		JWT      JWTConfig
 		LogLevel string `env:"LOG_LEVEL" env-default:"INFO"`
 	}
 
-	// ServerConfig содержит конфигурацию сервера.
-	ServerConfig struct {
-		Port string `env:"SERVER_PORT" env-default:"8080"`
-	}
-
 	// DatabaseConfig содержит конфигурацию базы данных.
 	DatabaseConfig struct {
-		Host     string `env:"DATABASE_HOST" env-default:"localhost"`
+		Host     string `env:"DATABASE_HOST"`
 		Port     string `env:"DATABASE_PORT" env-default:"5432"`
 		User     string `env:"DATABASE_USER" env-default:"shop"`
 		Password string `env:"DATABASE_PASSWORD" env-default:"shop"`

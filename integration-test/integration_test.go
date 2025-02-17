@@ -34,7 +34,7 @@ var (
 
 func TestMain(m *testing.M) {
 	var err error
-	testConfig, err = config.LoadConfigFrom("test.env")
+	testConfig, err = config.LoadConfig()
 	if err != nil {
 		fmt.Printf("Не удалось загрузить тестовую конфигурацию: %v\n", err)
 		os.Exit(1)
@@ -62,7 +62,7 @@ func setupTestServer() *httptest.Server {
 	sendCoinUseCase := uc.NewSendCoinUseCase(userDB, transactionDB, log)
 	buyItemUseCase := uc.NewBuyItemUseCase(userDB, itemDB, transactionDB, log)
 
-	server := http2.NewServer(testConfig.Server.Port, userInfoUseCase, sendCoinUseCase, buyItemUseCase, log)
+	server := http2.NewServer(userInfoUseCase, sendCoinUseCase, buyItemUseCase, log)
 	return httptest.NewServer(server.Handler)
 }
 
