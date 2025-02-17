@@ -31,6 +31,10 @@ linter-hadolint: ### Проверить с помощью hadolint linter
 	git ls-files --exclude='Dockerfile*' --ignored | xargs hadolint
 .PHONY: linter-hadolint
 
+stress-test: ### Запустить нагрузочный тест
+	vegeta attack -rate=1000 -duration=10s -targets=stress-test/targets.list -workers=4 | vegeta report
+.PHONY: stress-test
+
 test: ### Запустить тесты
 	go test -v -cover -race ./internal/...
 .PHONY: test

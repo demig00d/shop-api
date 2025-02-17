@@ -1,0 +1,17 @@
+POST http://localhost:8080/api/auth
+Content-Type: application/json
+@stress-test/auth_user1.json
+
+GET http://localhost:8080/api/info
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIn0.xMpiGanjLuT9-P3BXbsI6pKa8BB2suAXkxltSwrGFOc
+
+GET http://localhost:8080/api/buy/pen
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIxIn0.xMpiGanjLuT9-P3BXbsI6pKa8BB2suAXkxltSwrGFOc
+
+GET http://localhost:8080/api/info
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIn0.l36E3wEEZ7VhYDhpi4tOGUdxGQ7N1gWifa_57len4wY
+
+POST http://localhost:8080/api/sendCoin
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InVzZXIyIn0.l36E3wEEZ7VhYDhpi4tOGUdxGQ7N1gWifa_57len4wY
+@stress-test/send_1_coins.json
