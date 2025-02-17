@@ -1,3 +1,5 @@
+![coverage](https://raw.githubusercontent.com/demig00d/shop-api/badges/.badges/master/coverage.svg)
+
 ## Запуск
 
 ```sh
