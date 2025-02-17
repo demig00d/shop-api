@@ -1,6 +1,10 @@
 name: Shop CI
 
 on:
+  push:
+    branches:
+      - master
+
   pull_request:
     branches:
       - master
@@ -13,9 +17,11 @@ jobs:
       - uses: actions/setup-go@v3
 
       - name: generate test coverage
-        run: go test ./... -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
+        run: go test ./internal/... -coverprofile=./cover_unit.out -covermode=atomic -coverpkg=./...
 
       - name: check test coverage
-        uses: vladopajic/go-test-coverage@v2
+      - uses: vladopajic/go-test-coverage@v2
         with:
           config: ./.testcoverage.yml
+          git-token: ${{ github.ref_name == 'master' && secrets.GITHUB_TOKEN || '' }}
+          git-branch: badges
