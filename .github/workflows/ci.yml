@@ -20,7 +20,7 @@ jobs:
         run: go test ./internal/... -coverprofile=./cover_unit.out -covermode=atomic -coverpkg=./...
 
       - name: check test coverage
-      - uses: vladopajic/go-test-coverage@v2
+        uses: vladopajic/go-test-coverage@v2
         with:
           config: ./.testcoverage.yml
           git-token: ${{ github.ref_name == 'master' && secrets.GITHUB_TOKEN || '' }}
