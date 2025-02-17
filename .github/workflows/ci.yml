@@ -1,5 +1,7 @@
 name: Shop CI
 
+permissions: write-all
+
 on:
   push:
     branches:
