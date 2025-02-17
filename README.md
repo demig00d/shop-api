@@ -1,7 +1,7 @@
 ## Запуск
 
 ```sh
-docker compose up --build -d avito-shop-service db
+docker compose up --build -d
 ```
 
 или
