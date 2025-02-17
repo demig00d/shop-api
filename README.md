@@ -3,6 +3,14 @@
 
 ## Запуск
 
+**1. Создать .env файл**
+
+```sh
+cp env.template .env
+```
+
+**2. Запустить контейнеры**
+
 ```sh
 docker compose up --build -d
 ```
