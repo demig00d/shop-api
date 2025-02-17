@@ -1,3 +1,4 @@
+![workflow](https://github.com/demig00d/shop-api/actions/workflows/ci.yml/badge.svg)
 ![coverage](https://raw.githubusercontent.com/demig00d/shop-api/badges/.badges/master/coverage.svg)
 
 ## Запуск
@@ -20,7 +21,7 @@ make compose-up
 go test -v -race ./internal/...
 ```
 
-**Итнеграционнае тесты:**
+**Интеграционные тесты:**
 
 ```sh
 make compose-up-integration-test
