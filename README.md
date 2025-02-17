@@ -55,7 +55,7 @@ curl -X POST \
   http://localhost:8080/api/auth \
   -H 'Content-Type: application/json' \
   -d '{
-    "username": "user1",
+    "username": "user2",
     "password": "password"
   }'
 ```
@@ -74,7 +74,7 @@ make stress-test
 
 Результаты теста при **1k** RPS:
 
-- среднее время ответа: **50 мс**
+- среднее время ответа: **12.791ms**
 - успешных ответов: **99.92%**
 
 ![results](stress-test/stress-test-report.png)
