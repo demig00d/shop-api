@@ -12,15 +12,15 @@ help: ## Показать help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nИспользование:\n  make \033[36m<цель>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 compose-up: ### Запустить docker-compose
-	docker-compose up --build -d
+	docker compose up --build -d
 .PHONY: compose-up
 
 compose-up-integration-test: ### Запустить docker-compose с интеграционным тестом
-	docker-compose up --build --abort-on-container-exit --exit-code-from integration
+	docker compose -f docker-compose.integration.yml up --build --abort-on-container-exit --exit-code-from integration
 .PHONY: compose-up-integration-test
 
 compose-down: ### Остановить docker-compose
-	docker-compose down --remove-orphans
+	docker compose down --remove-orphans
 .PHONY: compose-down
 
 linter-golangci: ### Проверить с помощью golangci linter
