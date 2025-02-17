@@ -1,24 +1,25 @@
-package http
+package middlewares
 
 import (
 	"context"
 	"net/http"
 
+	"shop/internal/http/helpers"
 	"shop/internal/usecase"
 	"shop/pkg/logger"
 	"strings"
 )
 
-type authMiddlewareHandler struct {
+type AuthMiddlewareHandler struct {
 	userUseCase usecase.UserUseCaseInterface
 }
 
-func NewAuthMiddlewareHandler(uc usecase.UserUseCaseInterface) authMiddlewareHandler {
-	return authMiddlewareHandler{userUseCase: uc}
+func NewAuthMiddlewareHandler(uc usecase.UserUseCaseInterface) AuthMiddlewareHandler {
+	return AuthMiddlewareHandler{userUseCase: uc}
 }
 
 // AuthMiddleware middleware функция для проверки JWT токена авторизации.
-func (h authMiddlewareHandler) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
+func (h AuthMiddlewareHandler) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log := logger.FromContext(r.Context())
 		log.Debug("Проверка авторизации", "path", r.URL.Path, "method", r.Method)
@@ -26,7 +27,7 @@ func (h authMiddlewareHandler) AuthMiddleware(next http.HandlerFunc) http.Handle
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" {
 			log.Warn("Отсутствует токен авторизации")
-			RespondWithError(w, http.StatusUnauthorized, "Не авторизован: отсутствует токен")
+			helpers.RespondWithError(w, http.StatusUnauthorized, "Не авторизован: отсутствует токен")
 
 			return
 		}
@@ -35,7 +36,7 @@ func (h authMiddlewareHandler) AuthMiddleware(next http.HandlerFunc) http.Handle
 		username, err := h.userUseCase.VerifyJWTToken(tokenString)
 		if err != nil {
 			log.Warn("JWT верификация не удалась", "error", err)
-			RespondWithError(w, http.StatusUnauthorized, "Не авторизован: "+err.Error())
+			helpers.RespondWithError(w, http.StatusUnauthorized, "Не авторизован: "+err.Error())
 			return
 		}
 

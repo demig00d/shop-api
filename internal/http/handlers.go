@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"shop/internal/http/helpers"
+	"shop/internal/http/middlewares"
 	"shop/internal/models"
 	"shop/internal/usecase"
 	"shop/pkg/logger"
@@ -16,7 +18,7 @@ type ApiHandler struct {
 	userUseCase     usecase.UserUseCaseInterface
 	sendCoinUseCase usecase.SendCoinUseCaseInterface
 	buyItemUseCase  usecase.BuyItemUseCaseInterface
-	authMiddleware  authMiddlewareHandler
+	authMiddleware  middlewares.AuthMiddlewareHandler
 	log             *logger.Logger
 }
 
@@ -31,7 +33,7 @@ func NewApiHandler(
 		userUseCase:     userUseCase,
 		sendCoinUseCase: sendCoinUseCase,
 		buyItemUseCase:  buyItemUseCase,
-		authMiddleware:  NewAuthMiddlewareHandler(userUseCase),
+		authMiddleware:  middlewares.NewAuthMiddlewareHandler(userUseCase),
 		log:             log,
 	}
 }
@@ -49,20 +51,20 @@ func (h *ApiHandler) handleInfo(w http.ResponseWriter, r *http.Request) {
 	log := logger.FromContext(r.Context())
 	log.Debug("Обработка запроса handleInfo", "path", r.URL.Path, "method", r.Method)
 
-	username := UsernameFromContext(r.Context())
+	username := helpers.UsernameFromContext(r.Context())
 
 	response, err := h.userUseCase.GetUserInfo(r.Context(), username)
 	if err != nil {
 		log.Error("Ошибка usecase GetUserInfo", "username", username, "error", err)
 		if errors.Is(err, usecase.ErrUserNotFound) {
-			RespondWithError(w, http.StatusNotFound, err.Error())
+			helpers.RespondWithError(w, http.StatusNotFound, err.Error())
 		} else {
-			RespondWithError(w, http.StatusInternalServerError, "Внутренняя ошибка сервера.")
+			helpers.RespondWithError(w, http.StatusInternalServerError, "Внутренняя ошибка сервера.")
 		}
 		return
 	}
 
-	RespondWithJSON(w, http.StatusOK, response)
+	helpers.RespondWithJSON(w, http.StatusOK, response)
 }
 
 // handleSendCoin обрабатывает запросы на отправку монет.
@@ -70,18 +72,18 @@ func (h *ApiHandler) handleSendCoin(w http.ResponseWriter, r *http.Request) {
 	log := logger.FromContext(r.Context())
 	log.Debug("Обработка запроса handleSendCoin", "path", r.URL.Path, "method", r.Method)
 
-	username := UsernameFromContext(r.Context())
+	username := helpers.UsernameFromContext(r.Context())
 
 	var req models.SendCoinRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		log.Error("Ошибка декодирования запроса handleSendCoin", "error", err)
-		RespondWithError(w, http.StatusBadRequest, "Неверный запрос.")
+		helpers.RespondWithError(w, http.StatusBadRequest, "Неверный запрос.")
 		return
 	}
 	defer r.Body.Close()
 
 	if req.Amount <= 0 {
-		RespondWithError(w, http.StatusBadRequest, "Неверный запрос.")
+		helpers.RespondWithError(w, http.StatusBadRequest, "Неверный запрос.")
 		return
 	}
 
@@ -93,14 +95,14 @@ func (h *ApiHandler) handleSendCoin(w http.ResponseWriter, r *http.Request) {
 			errors.Is(err, usecase.ErrSelfTransfer) ||
 			errors.Is(err, usecase.ErrReceiverNotFound) ||
 			errors.Is(err, usecase.ErrUserNotFound) {
-			RespondWithError(w, http.StatusBadRequest, err.Error())
+			helpers.RespondWithError(w, http.StatusBadRequest, err.Error())
 		} else {
-			RespondWithError(w, http.StatusInternalServerError, "Внутренняя ошибка сервера.")
+			helpers.RespondWithError(w, http.StatusInternalServerError, "Внутренняя ошибка сервера.")
 		}
 		return
 	}
 
-	RespondWithOK(w)
+	helpers.RespondWithOK(w)
 }
 
 // handleBuyItem обрабатывает запросы на покупку предмета за монеты.
@@ -111,11 +113,11 @@ func (h *ApiHandler) handleBuyItem(w http.ResponseWriter, r *http.Request) {
 	itemPath := strings.TrimPrefix(r.URL.Path, "/api/buy/")
 
 	if itemPath == "" {
-		RespondWithError(w, http.StatusBadRequest, "Название предмета обязательно в пути /api/buy/{itemName}")
+		helpers.RespondWithError(w, http.StatusBadRequest, "Название предмета обязательно в пути /api/buy/{itemName}")
 		return
 	}
 
-	username := UsernameFromContext(r.Context())
+	username := helpers.UsernameFromContext(r.Context())
 
 	err := h.buyItemUseCase.BuyItem(r.Context(), username, itemPath)
 	if err != nil {
@@ -124,13 +126,13 @@ func (h *ApiHandler) handleBuyItem(w http.ResponseWriter, r *http.Request) {
 			errors.Is(err, usecase.ErrItemRequired) ||
 			errors.Is(err, usecase.ErrNotEnoughCoins) ||
 			errors.Is(err, usecase.ErrUserNotFound) {
-			RespondWithError(w, http.StatusBadRequest, err.Error())
+			helpers.RespondWithError(w, http.StatusBadRequest, err.Error())
 		} else {
-			RespondWithError(w, http.StatusInternalServerError, "Внутренняя ошибка сервера.")
+			helpers.RespondWithError(w, http.StatusInternalServerError, "Внутренняя ошибка сервера.")
 		}
 		return
 	}
-	RespondWithOK(w)
+	helpers.RespondWithOK(w)
 }
 
 // handleAuth обрабатывает запросы аутентификации.
@@ -141,7 +143,7 @@ func (h *ApiHandler) handleAuth(w http.ResponseWriter, r *http.Request) {
 	var req models.AuthRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		log.Error("Ошибка декодирования запроса handleAuth", "error", err)
-		RespondWithError(w, http.StatusBadRequest, "Неверный запрос.")
+		helpers.RespondWithError(w, http.StatusBadRequest, "Неверный запрос.")
 		return
 	}
 	defer r.Body.Close()
@@ -150,13 +152,13 @@ func (h *ApiHandler) handleAuth(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Warn("Ошибка аутентификации", "username", req.Username, "error", err)
 		if errors.Is(err, usecase.ErrInvalidPassword) {
-			RespondWithError(w, http.StatusUnauthorized, err.Error())
+			helpers.RespondWithError(w, http.StatusUnauthorized, err.Error())
 		} else {
-			RespondWithError(w, http.StatusInternalServerError, "Внутренняя ошибка сервера.")
+			helpers.RespondWithError(w, http.StatusInternalServerError, "Внутренняя ошибка сервера.")
 		}
 		return
 	}
 
 	response := models.AuthResponse{Token: token}
-	RespondWithJSON(w, http.StatusOK, response)
+	helpers.RespondWithJSON(w, http.StatusOK, response)
 }

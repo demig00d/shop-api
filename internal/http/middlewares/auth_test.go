@@ -1,10 +1,12 @@
-package http
+package middlewares
 
 import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"shop/internal/http/helpers"
 
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -21,7 +23,7 @@ func TestAuthMiddleware_Success(t *testing.T) {
 	// Тестовый обработчик, который будет вызван после middleware.
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Проверяем, что username был извлечен из контекста.
-		username := UsernameFromContext(r.Context())
+		username := helpers.UsernameFromContext(r.Context())
 		assert.Equal(t, "testuser", username, "Username должен быть извлечен из контекста")
 		w.WriteHeader(http.StatusOK)
 	})
