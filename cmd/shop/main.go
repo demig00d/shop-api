@@ -37,6 +37,9 @@ func main() {
 		os.Exit(1)
 	}
 
+	database.SetMaxOpenConns(100)
+	database.SetMaxIdleConns(25)
+
 	userDB := db.NewUserDB(database, log)
 	itemDB := db.NewItemDB(database, log)
 	transactionDB := db.NewTransactionDB(database, log)
