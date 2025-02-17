@@ -1,0 +1,31 @@
+services:
+  testdb:
+    image: postgres:13
+    container_name: postgres
+    env_file: "integration-test/test.env"
+    volumes:
+      - ./migrations:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATABASE_USER} -d ${DATABASE_NAME}"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    networks:
+      - internal
+
+  integration:
+    build:
+      context: .
+      dockerfile: integration-test/Dockerfile
+    container_name: integration
+    image: integration
+    env_file: "integration-test/test.env"
+    depends_on:
+      testdb:
+        condition: service_healthy
+    networks:
+      - internal
+
+networks:
+  internal:
